@@ -7,9 +7,10 @@ const countdownElTitle = document.getElementById('countdown-title');
 const countdownBtn = document.getElementById('countdown-button');
 const timeElements = document.querySelectorAll('span');
 
-let countDownTitle = '';
-let countDownDate = '';
+let countdownTitle = '';
+let countdownDate = '';
 let countdownValue = Date;
+let countdownActive; // needed for setInterval
 
 // Units of time in milliseconds format
 const second = 1000;
@@ -23,6 +24,7 @@ dateEl.setAttribute('min', today);
 
 // Populate Countdown | Complete UI
 function updateDom() {
+    countdownActive = setInterval(() => {
     const now = new Date().getTime();
     const distance = countdownValue - now;
     console.log('distance', distance);
@@ -34,7 +36,7 @@ function updateDom() {
     console.log(days, hours, minutes, seconds);
 
     // Populate Countdown
-    countdownElTitle.textContent = `${countDownTitle}`;
+    countdownElTitle.textContent = `${countdownTitle}`;
     timeElements[0].textContent = `${days}`;
     timeElements[1].textContent = `${hours}`;
     timeElements[2].textContent = `${minutes}`;
@@ -44,21 +46,35 @@ function updateDom() {
     inputContainer.hidden = true;
     // Show Countdown
     countdownEl.hidden = false;
+    }, second);
 }
 
 // Value from form input
 function updateCountdown(event) {
     event.preventDefault();
-    countDownTitle = event.srcElement[0].value;
-    countDownDate = event.srcElement[1].value;
-    console.log(countDownTitle, countDownDate);
+    countdownTitle = event.srcElement[0].value;
+    countdownDate = event.srcElement[1].value;
+    console.log(countdownTitle, countdownDate);
     // Get number version of current date | update DOM
-    countdownValue = new Date(countDownDate).getTime();
+    countdownValue = new Date(countdownDate).getTime();
     console.log('value:', countdownValue);
     updateDom();
 }
 
+// Reset All values
+function reset() {
+    // hide countdown and show input
+    countdownEl.hidden = true;
+    inputContainer.hidden = false;
+    // Stop the countdown
+    clearInterval(countdownActive);
+    // Reset the values 
+    countdownTitle = '';
+    countdownDate = '';
+}
+
 // Event Listeners
 countdownForm.addEventListener('submit', updateCountdown);
+countdownBtn.addEventListener('click', reset);
 
 
